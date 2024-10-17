@@ -1,10 +1,25 @@
 import 'package:flutter/material.dart';
 import '../components/custom_app_bar.dart';
-import '../components/freshness_indicator.dart';
 import '../components/item_card.dart';
+import '../models/models.dart';
+import 'add_item_screen.dart';
+import 'inventory_screen.dart';
+import 'recipes_screen.dart';
+import 'item_details_screen.dart';
+import 'dart:math';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  HomeScreen({Key? key}) : super(key: key);
+
+  final List<Map<String, dynamic>> _recentItems = List.generate(
+    5,
+    (index) => {
+      'name': _getRandomFoodItem(),
+      'quantity': Random().nextInt(5) + 1,
+      'freshnessLevel': FreshnessLevel.values[Random().nextInt(3)],
+      'expiryDate': DateTime.now().add(Duration(days: Random().nextInt(14))),
+    },
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +42,10 @@ class HomeScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: Navigate to Add Item Screen
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddItemScreen()),
+          );
         },
         child: const Icon(Icons.add),
       ),
@@ -50,8 +68,8 @@ class HomeScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildOverviewItem(context, 'Fresh', 15, Colors.green),
-                _buildOverviewItem(context, 'Expiring Soon', 5, Colors.orange),
-                _buildOverviewItem(context, 'Expired', 2, Colors.red),
+                _buildOverviewItem(context, 'Medium', 5, Colors.orange),
+                _buildOverviewItem(context, 'Expiring Soon', 2, Colors.red),
               ],
             ),
           ],
@@ -83,23 +101,38 @@ class HomeScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildQuickAccessItem(context, Icons.list_alt, 'Inventory'),
-            _buildQuickAccessItem(context, Icons.restaurant_menu, 'Recipes'),
-            _buildQuickAccessItem(context, Icons.settings, 'Settings'),
+            _buildQuickAccessItem(context, Icons.list_alt, 'Inventory', () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => InventoryScreen()),
+              );
+            }),
+            _buildQuickAccessItem(context, Icons.restaurant_menu, 'Recipes',
+                () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => RecipesScreen()),
+              );
+            }),
+            _buildQuickAccessItem(context, Icons.settings, 'Settings', () {
+              // TODO: Navigate to Settings screen
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text('Settings screen not implemented yet')),
+              );
+            }),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildQuickAccessItem(
-      BuildContext context, IconData icon, String label) {
+  Widget _buildQuickAccessItem(BuildContext context, IconData icon,
+      String label, VoidCallback onPressed) {
     return Column(
       children: [
         FilledButton.tonal(
-          onPressed: () {
-            // TODO: Navigate to respective screen
-          },
+          onPressed: onPressed,
           style: FilledButton.styleFrom(
             shape: const CircleBorder(),
             padding: const EdgeInsets.all(16),
@@ -121,19 +154,56 @@ class HomeScreen extends StatelessWidget {
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: 5, // Show last 5 items
+          itemCount: _recentItems.length,
           itemBuilder: (context, index) {
-            // TODO: Replace with actual data
+            final item = _recentItems[index];
             return ItemCard(
-              name: 'Item ${index + 1}',
-              expiryDate: DateTime.now().add(Duration(days: index * 2)),
+              name: item['name'],
+              quantity: item['quantity'],
+              freshnessLevel: item['freshnessLevel'],
               onTap: () {
-                // TODO: Navigate to Item Details Screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ItemDetailsScreen(
+                      name: item['name'],
+                      quantity: item['quantity'],
+                      freshnessLevel: item['freshnessLevel'],
+                      expiryDate: item['expiryDate'],
+                    ),
+                  ),
+                );
               },
             );
           },
         ),
       ],
     );
+  }
+
+  static String _getRandomFoodItem() {
+    final foodItems = [
+      'Apple',
+      'Banana',
+      'Orange',
+      'Milk',
+      'Bread',
+      'Eggs',
+      'Cheese',
+      'Chicken',
+      'Rice',
+      'Pasta',
+      'Tomato',
+      'Cucumber',
+      'Carrot',
+      'Onion',
+      'Potato',
+      'Yogurt',
+      'Fish',
+      'Beef',
+      'Lettuce',
+      'Spinach'
+    ];
+    return foodItems[Random().nextInt(foodItems.length)];
   }
 }

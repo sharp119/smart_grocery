@@ -15,6 +15,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           icon: const Icon(Icons.search),
           onPressed: () {
             // TODO: Implement search functionality
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                  content: Text('Search functionality not implemented yet')),
+            );
           },
         ),
       ],

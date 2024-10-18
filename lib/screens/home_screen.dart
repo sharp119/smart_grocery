@@ -6,7 +6,9 @@ import 'add_item_screen.dart';
 import 'inventory_screen.dart';
 import 'recipes_screen.dart';
 import 'item_details_screen.dart';
+import 'settings_screen.dart';
 import 'dart:math';
+import '../models/models.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -24,7 +26,20 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(title: 'Food Inventory'),
+      appBar: CustomAppBar(
+        title: 'Food Inventory',
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -115,10 +130,9 @@ class HomeScreen extends StatelessWidget {
               );
             }),
             _buildQuickAccessItem(context, Icons.settings, 'Settings', () {
-              // TODO: Navigate to Settings screen
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text('Settings screen not implemented yet')),
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
               );
             }),
           ],

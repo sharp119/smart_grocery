@@ -27,3 +27,27 @@ class Recipe {
     required this.instructions,
   });
 }
+
+class UserProfile {
+  String name;
+  String email;
+  String phoneNumber;
+  String? avatarUrl;
+
+  UserProfile({
+    required this.name,
+    required this.email,
+    required this.phoneNumber,
+    this.avatarUrl,
+  });
+}
+
+class PurchaseHistoryItem {
+  final DateTime date;
+  final List<String> items;
+
+  PurchaseHistoryItem({
+    required this.date,
+    required this.items,
+  });
+}
